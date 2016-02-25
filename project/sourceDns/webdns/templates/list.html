@@ -1,0 +1,53 @@
+<head>
+<title>详细信息</title>
+<script language="JavaScript" type="text/javascript" src="{{STATIC_URL}}js/My97DatePicker/WdatePicker.js"></script>
+<link rel="stylesheet" href="{{STATIC_URL}}js/jquery-ui-1.8.16.custom/css/ui-lightness/jquery-ui-1.8.16.custom.css" type="text/css"></link>
+<script type="text/javascript" src="{{STATIC_URL}}js/jquery.form.js"></script>
+<link rel="stylesheet" href="{{STATIC_URL}}css/common.css" type="text/css"></link>
+</head>
+<body>
+    <div id="finddiv" style="float: left; margin-top: 10px; width: 100%; display: block">
+    <table style="width: 100%" border=1">
+        <tr class="TableHeader">
+            <td colspan="6"><b>基本信息</b></td>
+        </tr>
+        <tr>
+            <td   width="10%"><b>主机</b></td>
+            <td width="20%">{{data.host}}</td>
+        </tr>
+        <tr>
+            <td   width="10%"><b>二级域名</b></td>
+            <td width="20%">{{data.domain}}</td>
+        </tr>
+        <tr>
+            <td   width="10%"><b>所有者</b></td>
+            <td width="20%">{{data.owner}}</td>
+        </tr>
+        <tr>
+            <td   width="10%"><b>源站IP</b></td>
+            <td width="20%">{{data.source_ip}}</td>
+        </tr>
+        <tr>
+            <td   width="10%"><b>TTL值</b></td>
+            <td width="20%">{{data.ttl}}</td>
+        </tr>
+        <tr>
+            <td   width="10%"><b>说明</b></td>
+            <td width="20%">{{data.sm}}</td>
+        </tr>
+        <tr>
+            <td   width="10%"><b>网宿CNAME</b></td>
+            <td width="20%">{{data.wc_cname}}</td>
+        </tr>
+        <tr>
+            <td   width="10%"><b>蓝汛CNAME</b></td>
+            <td width="20%">{{data.cc_cname}}</td>
+        </tr>
+        <tr>
+            <td   width="10%"><b>缓存策略</b></td>
+            <td width="20%">{{data.cache_Content}}</td>
+        </tr>
+    </table>
+    </div>
+</body>
+</html>

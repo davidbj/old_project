@@ -1,0 +1,218 @@
+{%extends "base.html"%}
+<html>
+<head> 
+</head>
+{%block body%}
+<body>
+<script src="js/jquery-validation-1.8.1/jquery.validate.js" type="text/javascript"></script>
+<script type="text/javascript">  
+$.validator.setDefaults({
+	submitHandler: function() {  
+   	
+ 	  	document.getElementById('saveform1').submit(); 
+	 }
+}); 
+$.validator.methods.equalmin = function(value, element) {
+    if(value!=''){
+	    //document.getElementById('minusage').value=value=changeTwoDecimal_f(value);
+	    if(value>=0.8&& value<=10 ){ 
+	        return true
+	    }else{
+	        return false;
+	    }
+    }else{
+        return false;
+    } 
+};
+$().ready(function() {  
+	// validate signup form on keyup and submit
+	$("#saveform1").validate({
+		rules: { 
+		   BUSSINESS: { required:true } ,
+		   MAXUSAGE: { required:true  ,equalmin:true,number:true}  
+		},
+		messages: { 
+			BUSSINESS: "业务列表必填！" ,
+			MAXUSAGE: "最高使用率必填，取值范围0.8-10,默认值0.96！" 
+			 
+		},errorElement: "em",
+		errorContainer: $("#warning")
+	});   
+     $(":submit").button();  
+});  
+</script>
+{%if message == '1'%}
+    <script>alert('记录操作成功!');location.replace('/?cid={{cid}}')</script>
+{%endif%}
+{%if message == '2'%}
+    <script>alert('系统出现故障,数据库插入失败!');location.replace('/')</script>
+{%endif%}
+{%if message == '3'%}
+    <script>alert('系统出现故障,记录插入失败!');location.replace('/')</script>
+{%endif%}
+<div style="float: left; width: 100%; margin-top: 3px"> 
+<form action="" name="saveform1" id="saveform1" method="post">{%csrf_token%} 
+	<table style="text-align: left; border: 0px; width: 100%" cellpadding="3px"> 
+    <tbody>
+            <input type="hidden" name='id' value="{{query.id}}">
+       <tr>  
+		<td style="text-align: right;"><b>主机</b><b color='red'>(必填)</b><b>：</b></td>
+		<td>
+            {% if query.id %}
+                <!--
+                <b>{{query.host}}</b>
+                <input type="hidden" name="host" value="{{query.host}}">
+                -->
+                <input type="text" id="host" name="host" value="{{query.host}}" readonly="readonly"><span id="chk"></span>
+            {%else%}
+                <input type="text" id="host" name="host" value="{{query.host}}"><span id="chk"></span>
+            {%endif%}
+        </td>
+	   </tr>
+        <tr>
+            <td style="text-align: right;"><b>二级域名(必填)：</b></td>
+            <td>
+                {%if query.id%}
+                <select name="domain" id="domain" readonly="readonly">
+                    <option value="">--请选择--</option>
+                    {%for i in data %}
+                    <option value="{{i.domain}}" {%if query.domain == i.domain%} selected {% endif %}>{{i.domain}}</option>
+                    {%endfor%}
+                </select>
+                {%else%}
+                <select name="domain" id="domain">
+                    <option value="">--请选择--</option>
+                    {%for i in data %}
+                    <option value="{{i.domain}}" {%if query.domain == i.domain%} selected {% endif %}>{{i.domain}}</option>
+                    {%endfor%}
+                </select>
+                {%endif%}
+            </td>
+        </tr>
+		<tr>
+			<td style="text-align: right;"><b>记录类型(必填)：</b></td>
+			<td>
+                <select name="type" onClick="host_form()">
+                    <option value="">--请选择--</option>
+                    <option value="MX" {% if query.type == 'MX' %} selected {%endif%}>MX</option>
+                    <option value="A" {% if query.type == 'A' %} selected {%endif%}>A</option>
+                    <option value="CNAME" {% if query.type == 'CNAME' %} selected {%endif%}>CNAME</option>
+                </select>
+            </td>
+	    </tr>
+		<tr>
+			<td style="text-align: right;"><b>TTL值(必填)：</b></td>
+			<td><input type="text" name="ttl" value="{{query.ttl}}"></td>
+		</tr>
+		<tr>
+			<td style="text-align: right;"><b>源站IP(必填)：</b></td>
+			<td>
+                <!-- <input type="text" name="source_ip" value="{{query.source_ip}}"> -->
+                <textarea name="source_ip">{{query.source_ip}}</textarea>
+                
+            </td>
+		</tr>
+		<tr>
+			<td style="text-align: right;"><b>蓝汛CNAME：</b></td>
+			<td><input type="text" name="cc_cname" value="{{query.cc_cname}}"></td>
+		</tr>
+		<tr>
+			<td style="text-align: right;"><b>网宿CNAME：</b></td>
+			<td><input type="text" name="wc_cname" value="{{query.wc_cname}}"></td>
+		</tr>
+		<tr>
+			<td style="text-align: right;"><b>是否启用加速：</b></td>
+			<td>
+                <input type="radio" name="js" value='1' {%if query.js == '1' or query.js == '1.0'%} checked {%endif%}>启用
+                <input type="radio" name="js" value='2' {%if query.js == '2' or query.js == '2.0'%} checked {%endif%}>不启用
+            </td>
+		</tr>
+		<tr>
+			<td style="text-align: right;"><b>使用人：</b></td>
+			<td><input type="text" name="owner" value="{{query.owner}}"></td>
+		</tr>
+		<tr> 
+			<td style="text-align: right;"><b>缓存规则：</b></td>
+			<td colspan="3"><textarea rows="10" cols="30" style="width:80%" name="cache_Content">{{query.cache_Content}}</textarea></td>
+		</tr> 
+		<tr> 
+			<td style="text-align: right;"><b>备注：</b></td>
+			<td colspan="3"><textarea rows="10" cols="30" style="width:80%" name="sm">{{query.sm}}</textarea></td>
+		</tr> 
+	</tbody>
+    </table>
+    <br> 
+	<center><button class="submit ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" type="submit" role="button" aria-disabled="false"><span class="ui-button-text">提 交</span>
+    </button>
+    </center> 
+	</form> 
+</div> 
+<script type="text/javascript">
+function bb(div){
+     var obj = document.getElementById(div);
+     if(obj.style.display==""){
+          obj.style.display="block";
+     }else if(obj.style.display=="none"){
+          obj.style.display="block";
+     }else if(obj.style.display=="block"){
+          obj.style.display="none";
+     }
+}
+     
+function inDaohang(divname,obj){
+    var f = false;
+    while(obj.parentNode){
+         if(obj.name==divname){
+              return true;
+         }
+         obj = obj.parentNode;
+    }
+    return false;
+}
+function closeDaohang(e,divname,aname){
+     if(e.id!=aname && e.id!='target'&& e.id!='target' && e.id.indexOf("td") ==-1&& e.id.indexOf("check") ==-1)
+     if(!inDaohang(divname,e)){
+          var a = document.getElementsByName(divname);
+          for(var i=0;i<a.length;i++){
+               a[i].style.display='none';
+          }
+
+     }
+
+}
+
+function aa(obj,td_name,tovalue,formvalue)
+{
+    var select_value=document.getElementById(tovalue); 
+	var td_value =document.getElementById(formvalue); 
+    if(obj.checked == true){ 
+        if(select_value.value.length>0){
+            select_value.value+="," + td_value.value;
+        }else{
+            select_value.value+=td_value.value;
+        }
+    }else{
+        if(select_value.value.indexOf("," + td_value.value + ",") != -1){
+            select_value.value = select_value.value.replace("," +td_value.value,'');
+        }else if(select_value.value.indexOf("," + td_value.value) != -1){
+            select_value.value = select_value.value.replace("," +td_value.value,'');
+        }else if(select_value.value.indexOf(td_value.value + ",") != -1){
+            select_value.value = select_value.value.replace(td_value.value + ",",'');
+        }else if(select_value.value.indexOf(td_value.value) != -1){
+            select_value.value = select_value.value.replace(td_value.value,'');
+        }
+    }
+}
+function host_form(){
+    var host = $('#host').val()
+    var domain = $('#domain').val()
+    var url = "/check_form.html?host="+host+"&domain="+domain
+    $.get(url, null, function(data){
+        $('#chk').html(data);
+    });
+}
+
+</script> 
+</body>
+{%endblock%}
+</html>

@@ -1,0 +1,425 @@
+{%extends "base.html"%}
+<html>
+<head> 
+{%block script%}
+{{block.super}}
+<script type="text/javascript" src="{{STATIC_URL}}js/common.js"></script>
+<script language="JavaScript"  type="text/javascript" src="{{STATIC_URL}}js/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
+<script src="{{STATIC_URL}}js/jquery-validation-1.8.1/jquery.validate.js" type="text/javascript"></script>
+{%endblock%}
+{%block link%}
+{{block.super}}
+<link rel="stylesheet" href="{{STATIC_URL}}js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css" type="text/css"></link>
+{%endblock%}
+</head>
+
+{%block body%}
+<body> 
+<script type="text/javascript" src="{{STATIC_URL}}js/tablesort.js"></script>
+<link rel="stylesheet" href="{{STATIC_URL}}css/table.css" type="text/css"></link> 
+<script type="text/javascript">
+	$().ready(function() {
+	 
+	 $(":submit").button();    
+	});  
+</script>
+{%if info == '1'%}
+{%if message == '1'%}
+    <script>alert('记录操作成功.')</script>
+{%endif%}
+{%if message == '2'%}
+    <script>alert('数据库插入失败.')</script>
+{%endif%}
+{%if message == '3'%}
+    <script>alert('记录更新失败.')</script>
+{%endif%}
+{%endif%}
+<script src="{{STATIC_URL}}js/jquery-validation-1.8.1/jquery.validate.js" type="text/javascript"></script>
+<!--
+<script type="text/javascript">  
+$.validator.setDefaults({
+    submitHandler: function() {  
+        document.getElementById('saveform1').submit(); 
+     }
+}); 
+$().ready(function() {  
+    // validate signup form on keyup and submit
+    $("#saveform1").validate({
+        rules: { 
+           ttl: { required:true, number:true  }
+        },
+        messages: { 
+            ttl: {required: "TTL 值不能为空!",
+                  number: "ttl 必须为数字"}
+        },errorElement: "em",
+        errorContainer: $("#warning")
+    });   
+     $(":submit").button();  
+});  
+</script>
+-->
+<div  class="headertitle">添加记录</div> 
+  <div class="headermenu"> 
+		 <div class="mbuttons"><a href="#" class="negative"
+			onclick="showHide('findDiv')"  title="搜  索"> <img
+			src="{{STATIC_URL}}images/query.gif" align="absmiddle" />搜  索</a>						
+		</div>
+		  
+         {%if user in permission%}
+		 <div class="mbuttons"><a href="#" class="negative"
+		 onclick="showmod('0', 'xls.html')"  title="批量添加"> <img
+		src="{{STATIC_URL}}images/upload.gif" align="absmiddle" />批量添加</a>						
+		</div>
+		<div class="mbuttons"><a href="#" class="negative"
+		 onclick="showmod('0', 'domain.html')"  title="新增"> <img
+		src="{{STATIC_URL}}images/add.gif" align="absmiddle" />新增二级域名</a>						
+		</div>
+        {%endif%}
+		 <div class="mbuttons"><a href="/logout.html?user={{user}}" class="negative" title=""> <img
+			src="{{STATIC_URL}}images/logout.gif" align="absmiddle" />注销</a>						
+		</div>
+   </div> 
+    
+  <div style="float:left; margin-top:3px;width:100%;"> 
+  <fieldset  class="ui-widget ui-widget-content ui-corner-all" ><legend  class="ui-widget ui-widget-content ui-corner-all" style="cursor:hand" onClick="showHide('findDiv');">搜索条件</legend>
+  <div class="list-div" id="findDiv" style="float:left; width:100%; text-align:center; "> 
+   <form action="" name="findform" id="findform" method="post">{%csrf_token%}
+	 	<table style="text-align:left;border: 0px; width:100%;" cellpadding="3px">{%csrf_token%}
+			 	 	 <tr> 
+						<td style="text-align: right;">
+							主机：
+						</td>
+						<td>
+							<INPUT TYPE="text" name="host" id="BUSSID" style="width: 200px" value="{{dc.host}}"/>
+						</td>
+						<td style="text-align: right;">
+							二级域名：
+						</td>
+						<td>
+                            <!--
+							<INPUT TYPE="text" name="domain" id="BSNAME" style="width: 200px"/>
+                            -->
+                            <select name="domain">
+                                <option value="">--请选择--</option>dd
+                                {%for i in gdata%}
+                                <option value="{{i.domain}}" {%if i.domain == dc.domain%} selected {%endif%}>{{i.domain}}</option>
+                                {%endfor%}
+                            </select>
+						</td>
+					</tr>
+					<tr> 
+						<td style="text-align: right;">
+							使用人：
+						</td>
+						<td>
+							<INPUT TYPE="text" name="owner" id="TYPE" style="width: 200px" value="{{dc.owner}}"/>
+						</td>
+						<td style="text-align: right;">
+						</td>
+						<td>
+							<INPUT TYPE="hidden" name="SIGN" id="SIGN" style="width: 200px"/>
+						</td>
+					</tr> 
+				</tr>  
+   </table>
+<br />
+    <center> <button class="submit" type="submit"> 提   交 </button>     </center>
+         <br>
+         </form> 
+         
+</div>
+ </fieldset>
+  </div> 
+   
+<div style="float:left ; width:100%" id="data"> 
+   
+ <table    bordercolor="#999999" border="1" cellpadding="2" cellspacing="0" style="border:1px  thin #ffffff"  width="100%">
+		<thead><tr> 
+					<th class="sortable-numeric"   style="width:30px" > 顺序</th> 
+					<th class="sortable" width="150px" >主机</th> 
+					<th class="sortable" width="150px" >二级域名</th> 
+					<th class="sortable" width="100px">记录类型</th>  
+					<th class="sortable">TTL值</th>
+					<th class="sortable">IP地址</th> 
+					<th class="sortable">使用人</th> 
+					<th width="200px" >操作 
+                    {%if user in permission%}
+                    ||
+                    <a href="/busi.html">新增记录</a>
+                    <!--
+                    <a href="#"    onClick="showmod(0, 'busi.html')"   title="添加记录"> <img  src="{{STATIC_URL}}images/edit.gif" align="absmiddle"  style="border:0"/>新增</a> -->
+                    {%endif%}
+                    </th>
+				</tr> 
+		</thead>
+				<tbody>
+				{%for i in data %}	 
+                {%if i.id == cid%}
+                <form method="post" action="" name="saveform1" id="saveform1">{%csrf_token%}
+                <input type="hidden" name="fid" value="1">
+                <input type="hidden" name="hid" value="1">
+				<!-- <tr class="TableLine1"  style="height:30px;" bgcolor="#EE00EE"> -->
+                 <tr style="height:30px;" bgcolor="#CDCD00">
+					<td>
+                        <input type="checkbox" name="id_c" value="{{i.id}}">
+                    </td> 
+                    <td>
+                        {%if user in permission%}
+                            <input type="text" name="f_host" value="{{i.host}}" readonly="readonly">
+                        {%else%}
+                            {{i.host}}
+                        {%endif%}
+                    </td>
+                        
+					<td align="center">
+                        {%if user in permission%}
+                            <!--
+                            <select name="f_domain" readonly="readonly">
+                                {%for j in gdata%}
+                                <option  value="{{j.domain}}" {%if i.domain == j.domain %} selected {%endif%}>{{j.domain}}</option>
+                                {%endfor%}
+                            </select>
+                            -->
+                            <input type="text" name="f_domain" value="{{i.domain}}" readonly="readonly">
+                        {%else%}
+                            {{i.domain}}
+                        {%endif%}
+                    </td> 
+					<td align="center">
+                        {%if user in permission%}
+                            <select name="type" id="type">
+                                <option  value="A" {%if i.type == 'A'%} selected {%endif%}>A</option>
+                                <option  value="CNAME" {%if i.type == 'CNAME'%} selected {%endif%}>CNAME</option>
+                            </select>
+                        {%else%}
+                            {{i.type}}
+                        {%endif%}
+                    </td>  
+					<td align="center">
+                        {%if user in permission%}
+                            <input type="text"  style="width:30%" name="ttl" id="ttl" maxlength="4" value="{{i.ttl}}">
+                            <br>
+                            <font color="red">ttl 值必须为整数.</font>
+                        {%else%}
+                            {{i.ttl}}
+                        {%endif%}
+                    </td> 
+					<td>
+                        {%if user in permission%}
+                            <textarea name="source_ip" id="source_ip">{{i.source_ip}}</textarea>
+                            <br>
+                            <font color="red">A记录有多个IP请用【回车】隔开.</font>
+                        {%else%}
+                            {{i.source_ip}}
+                        {%endif%}
+                    </td> 
+					<td align="center">
+                        {%if user in permission%}
+                            <input style="width:40%" type="text" name="f_owner" value="{{i.owner}}">
+                        {%else%}
+                            {{i.owner}}
+                        {%endif%}
+                    </td> 
+                    <input type="hidden" name="cc_cname" value="{{i.cc_name}}">
+                    <input type="hidden" name="js" value="{{i.js}}">
+                    <input type="hidden" name="wc_cname" value="{{i.wc_cname}}">
+                    <input type="hidden" name="sm" value="{{i.sm}}">
+                    <input type="hidden" name="cache_Content" value="{{i.cache_Content}}">
+                    <input type="hidden" name="id" value="{{i.id}}">
+					<td align="center">
+                       <button class="submit" type="submit">提交</button>
+				       <a onclick="showlog('list.html',{{i.id}})"><img style="border:0" src="{{STATIC_URL}}images/cal_list.gif" alt="详细信息"></a>  
+                       {%if user in permission%}
+                       <!--
+					   <a href="#"    onClick="showmod({{i.id}}, 'busi.html')"   title="修改"> <img
+							src="{{STATIC_URL}}images/edit.gif" align="absmiddle"  style="border:0"/></a>
+                        -->
+                       <a href="/busi.html?id={{i.id}}"><img style="border:0" src="{{STATIC_URL}}images/edit.gif" align="absmiddle"></a>
+                       <a onclick="return confirm('确定删除?')" href="/delete.html?id={{i.id}}"><img src="{{STATIC_URL}}images/delete.gif" align="absmiddle" style="border:0"/></a>
+                        
+                       {%endif%}
+					</td> 
+				</tr> 
+                </form>
+                {%else%}
+                <form method="post" action="" name="saveform1" id="saveform1">{%csrf_token%}
+                <input type="hidden" name="fid" value="1">
+				<tr class="TableLine1"  style="height:30px;"> 
+					<td>
+                        <input type="checkbox" name="id" value="{{i.id}}">
+                    </td> 
+                    <td>
+                        {%if user in permission%}
+                            <input type="text" name="f_host" value="{{i.host}}" readonly="readonly">
+                        {%else%}
+                            {{i.host}}
+                        {%endif%}
+                    </td>
+					<td align="center">
+                        <input type="text" name="f_domain" value="{{i.domain}}" readonly="readonly">
+                    </td> 
+					<td align="center">
+                        {%if user in permission%}
+                            <select name="type">
+                                <option  value="A" {%if i.type == 'A'%} selected {%endif%}>A</option>
+                                <option  value="CNAME" {%if i.type == 'CNAME'%} selected {%endif%}>CNAME</option>
+                            </select>
+                        {%else%}
+                            {{i.type}}
+                        {%endif%}
+                    </td>  
+					<td align="center">
+                        {%if user in permission%}
+                            <input type="text"  style="width:30%" name="ttl" id="ttl" maxlength="4" value="{{i.ttl}}">
+                            <br>
+                            <font color="red">ttl 值必须为整数.</font>
+                        {%else%}
+                            {{i.ttl}}
+                        {%endif%}
+                    </td> 
+					<td>
+                        {%if user in permission%}
+                            <textarea name="source_ip" id="source_ip">{{i.source_ip}}</textarea>
+                            <br>
+                            <font color="red">A记录有多个IP请用【回车】隔开.</font>
+                        {%else%}
+                            {{i.source_ip}}
+                        {%endif%}
+                    </td> 
+					<td align="center">
+                        {%if user in permission%}
+                            <input style="width:40%" type="text" name="f_owner" value="{{i.owner}}">
+                        {%else%}
+                            {{i.owner}}
+                        {%endif%}
+                    </td> 
+                    <input type="hidden" name="cc_cname" value="{{i.cc_name}}">
+                    <input type="hidden" name="js" value="{{i.js}}">
+                    <input type="hidden" name="wc_cname" value="{{i.wc_cname}}">
+                    <input type="hidden" name="sm" value="{{i.sm}}">
+                    <input type="hidden" name="cache_Content" value="{{i.cache_Content}}">
+                    <input type="hidden" name="id" value="{{i.id}}">
+					<td align="center">
+                       <button class="submit" type="submit">提交</button> 
+                       
+				       <a onclick="showlog('list.html',{{i.id}})"><img style="border:0" src="{{STATIC_URL}}images/cal_list.gif" alt="详细信息"></a>
+                       {%if user in permission%}
+					   <!--<a href="#"    onClick="showmod({{i.id}}, 'busi.html')"   title="修改"> <img
+							src="{{STATIC_URL}}images/edit.gif" align="absmiddle"  style="border:0"/></a>
+                        -->
+                       <a href="/busi.html?id={{i.id}}"><img style="border:0" src="{{STATIC_URL}}images/edit.gif" align="absmiddle"></a>
+                       <a onclick="return confirm('确定删除?')" href="/delete.html?id={{i.id}}"><img src="{{STATIC_URL}}images/delete.gif" align="absmiddle" style="border:0"/></a>
+                       
+                       {%endif%}
+					</td> 
+				</tr> 
+                </form>
+                {%endif%}
+                {%endfor%}
+                <tr>
+                    <td colspan="8">
+                        <!--
+                        <input type="checkbox" onClick="myck(this)">全选-->
+                        {%if user in permission%}
+                        <!--<a onclick="myck(this)" href="">选中删除</a>-->
+                        <input type="submit" name="set" onClick="submit_form()" value="选中删除">
+                        {%endif%}
+                    <span align="right">
+                        {%if data.has_previous%}
+                            <a href="?page={{data.previous_page_number}}&host={{dc.host}}&domain={{dc.domain}}&owner={{dc.owner}}">上一页</a>
+                        {%endif%}
+                    <span>
+                        Page {{data.number}} of {{data.paginator.num_pages}}.
+                    </span>
+                    {%if data.has_next%}
+                        <a href="?page={{data.next_page_number}}&host={{dc.host}}&domain={{dc.domain}}&owner={{dc.owner}}">下一页</a>
+                    {%endif%}
+                    </span>
+                    </td>
+                </tr>
+
+                <!-- </form> -->
+		        </tbody>
+                	</table> 
+</div>
+
+ <div id="mod" >  
+<iframe id="modframe" frameborder=0 style="width:100%;height:100%"></iframe>  
+</div> 
+<script type="text/javascript">  
+function showmod(ROWID, url){  
+    $("#mod").dialog("open"); 
+    /*document.getElementById('modframe').src="busi.html" ;  */
+    document.getElementById('modframe').src=url+"?id="+ROWID;
+}  
+$( "#mod" ).dialog({
+		autoOpen: false,
+		height: 550,
+		width: 850,
+	//	position:[100,-150] ,
+		title:'修改业务流量控制',
+		modal: true, 
+		 Cancel: function() {
+				$( this ).dialog( "close" );
+	    }/* ,
+		close: function() {
+			allFields.val( "" ).removeClass( "ui-state-error" );
+		}*/
+}); 
+</script>
+<div id="log" >  
+<iframe id="logframe" frameborder=0 style="width:100%;height:100%"></iframe>  
+</div> 
+ <script type="text/javascript">  
+function showlog(url,Id){  
+    $( "#log" ).dialog( "open" ); 
+    document.getElementById('logframe').src=url+'?id='+Id;  
+}  
+ $( "#log" ).dialog({
+			autoOpen: false,
+			height: 550,
+			width: 850,
+			//position:[0,30] ,
+			title:'域名详细信息',
+			modal: true, 
+			 Cancel: function() {
+					$( this ).dialog( "close" );
+		    }/* ,
+			close: function() {
+				allFields.val( "" ).removeClass( "ui-state-error" );
+			}*/
+		}); 
+
+function myck(data){
+    //var ids=''
+
+    var boxs=document.getElementsByName('id');
+    for(var $i=0; $i<boxs.length; $i++){
+        boxs[$i].checked = data.checked;
+    }
+}
+function loaddata(){
+var f_str = '0'; 
+$("input[name='id']").each(function(){
+   if($(this).attr("checked")==true){
+       f_str += ","+$(this).attr("value"); 
+          }
+          })  
+          if(f_str!="0")
+            f_str= f_str.substr(2);
+            return f_str;
+} 
+function submit_form(){ 
+    var ids=loaddata();  
+    if(ids=="0" || ids==""){
+      alert("请至少选择一条数据！");
+    }else{  
+      //confirm('确定删除?')
+      window.location.href ="/delete.html/?ids="+ids;  
+    } 
+}
+</script>
+</body>
+{%endblock%}
+</html> 

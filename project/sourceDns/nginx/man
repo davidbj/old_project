@@ -1,0 +1,36 @@
+Nginx django uwsgi整合:
+
+1. 安装Nginx
+安装Nginx 可以通过源码或者yum进行安装.如果线上环境,建议源码安装.
+
+注意:请系统工程师安装.安装完成之后,要进行安全优化.刚看一篇博客,开发工程师使用LNMP一键安装包部署线上环境. .svn源码文件都没有彻底删除、文件夹和文件权限全部777等各种安全隐患.
+
+
+2.安装和配置uwsgi
+  #install uwsgi software
+  tar -zxvf uwsgi-1.4.10.tar.gz
+  cd uwsgi-1.4.10
+  python setup.py install
+
+  #configure django
+  vim setting.py
+  
+  DEBUG=False
+  ALLOWED_HOSTS=['*', ]
+
+
+3.创建uwsgi入口文件,放置在manage.py同一层目录
+  请查看 django_wsgi.py 文件
+
+
+4.建立uwsgi启动配置文件,也放置manage.py同一目录
+  请查看uwsgi_socket.xml
+
+
+5.配置Nginx
+  请查看nginx.conf 配置文件
+
+
+6.启动程序
+  uwsgi -x uwsgi_socket.xml
+  service nginx start

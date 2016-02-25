@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>回源Dns管理系统</title>
+<link rel="stylesheet" href="{{STATIC_URL}}css/bootstrap.min.css">
+<link rel="stylesheet" href="{{STATIC_URL}}css/bootstrap-theme.min.css">
+<link >
+<script src="{{STATIC_URL}}js/jquery.min.js"></script>
+<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
+<script src="{{STATIC_URL}}js/tooltip.js"></script>
+<script src="{{STATIC_URL}}js/bootstrap3-validation.js"></script>
+<style type="text/css">
+    .bs-example{
+    	margin: 20px;
+    }
+    .col-sm-10{
+        width:30%;
+    }
+    .col-sm-2{
+        width:30%;
+    }
+    .radio{
+        width:10%;
+    }
+</style>
+</head>
+<body>
+{%if message == 'Y' %}
+    <script>alert('操作成功!');location.replace('/index.html?operator={{operator}}')</script>
+{%elif message == 'N'%}
+    <script>alert('操作失败!');location.replace('/index.html?operator={{operator}}')</script>
+{%elif message == 'CNN'%}
+    <script>alert('在电信VIEW中,该主机已经有CNAME记录!');location.replace('/index.html?operator={{operator}}')</script>
+{%elif message == 'ANN'%}
+    <script>alert('在其它VIEW中,该主机已经有CNAME记录!');location.replace('/index.html?operator={{operator}}')</script>
+{%endif%}
+<script>
+</script>
+<script type="text/javascript">
+$(function(){
+    console.log(111)
+    $("form").validation();
+    $("button[type='submit']").on('click', function(event){
+        if($("form").valid()==false){
+            $("#error-text").text("error!");
+            return false;
+        }
+    })
+})
+</script>
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+<div class="container">
+<div class="navbar-header">
+<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+<span class="sr-only">Toggle navigation</span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+</button>
+<ul class="nav navbar-nav">
+<li><a class="navbar-brand" style="margin-bottm:1px;"><img src="{{STATIC_URL}}imgs/letvlogo.png" style="height:18px"></a></li>
+<li>&nbsp</li>
+<li>&nbsp</li>
+<li><a class="navbar-brand" href="/index.html">首页</a></li>
+<li><a class="navbar-brand" href="/mailinfo.html">批量添加记录</a></li>
+<li><a class="navbar-brand" href="/zone.html">增加二级域名</a></li>
+</ul>
+</div>
+<form class="navbar-form navbar-right" role="form">
+<a href="#" class="btn btn-danger">退出</a>
+</form>
+</div>
+</div>
+<br>
+<br>
+<br>
+<br>
+<div class="bs-example">
+<form class="form-horizontal" role="form" action="" method="post">{%csrf_token%}
+    <input type="hidden" name='id' value="{{query.id}}">
+   <div class="form-group">
+      <label class="col-sm-2 control-label">主机</label>
+      <div class="col-sm-10">
+        {%if query.host%}
+         <input type="hidden" name="host" value="{{query.host}}">
+         <input id="host" type="text" data-toggle="tooltip" placeholder='请填写您要添加的主机名称' title="hello" data-placement="right"  class="form-control" check-type="required" maxlength="60" name="host" value="{{query.host}}" readonly>
+        {%else%}
+         <input id="host" type="text" data-toggle="tooltip" placeholder='请填写您要添加的主机名称' title="hello" data-placement="right"  class="form-control" check-type="required" maxlength="60" name="host">
+        {%endif%}
+      </div>
+   </div>
+   <div class="form-group">
+      <label for="inputPassword" class="col-sm-2 control-label">二级域名</label>
+      <div class="col-sm-10">
+       {%if query.zone%}
+        <input type="hidden" name="zone" value="{{query.zone}}">
+        <fieldset disabled>
+        <select class="form-control"  name="zone">
+		   <option>点击选择</option>
+            {%for z in zones%}
+		   <option value="{{z.zone}}" {%if z.zone == query.zone%} selected {%endif%}>{{z.zone}}</option>
+           {%endfor%}
+		</select>
+        <fieldset>
+       {%else%}
+        <select class="form-control" name="zone">
+		   <option>点击选择</option>
+            {%for z in zones%}
+		   <option value="{{z.zone}}">{{z.zone}}</option>
+           {%endfor%}
+		</select>
+       {%endif%}
+      </div>
+   </div>
+   <div class="form-group">
+      <label for="inputPassword" class="col-sm-2 control-label">视图</label>
+      <div class="col-sm-10">
+      {%if query.operator%}
+      <input type="hidden" name="operator" value="{{query.operator}}">
+      <fieldset disabled>
+        <select class="form-control" name="operator">
+		   <option>点击选择</option>
+		   <option value="ct" {%if query.operator == 'ct'%} selected {%endif%}>电信</option>
+		   <option value="any" {%if query.operator == 'any'%} selected {%endif%}>其他</option>
+		</select>
+       </fieldset>
+       {%else%}
+        <select class="form-control" name="operator">
+		   <option>点击选择</option>
+		   <option value="ct">电信</option>
+		   <option value="any">其他</option>
+		</select>
+       {%endif%}
+      </div>
+   </div>
+   <div class="form-group">
+      <label for="inputPassword" class="col-sm-2 control-label">记录类型</label>
+      <div class="col-sm-10">
+        <select class="form-control" name="type">
+		   <option>点击选择</option>
+		   <option value="A" {%if query.type == 'A'%} selected {%endif%}>A</option>
+		   <option value="CNAME" {%if query.type == 'CNAME' %} selected {%endif%}>CNAME</option>
+		</select>
+      </div>
+   </div>
+   <div class="form-group">
+      <label class="col-sm-2 control-label">TTL值</label>
+      <div class="col-sm-10">
+         <input class="form-control" id="ttl" type="text" name='ttl' check-type="number" maxlength="6" placeholder='请填写您要添加的TTL值' value="{{query.ttl}}">
+      </div>
+   </div>
+   <div class="form-group">
+      <label class="col-sm-2 control-label">源站IP地址</label>
+      <div class="col-sm-10">
+         <textarea class="form-control" rows="4" check-type="required" name="data" placeholder='多个ip地址,请用换行隔开'>{{query.data}}</textarea>
+      </div>
+   </div>
+   <div class="form-group">
+      <label class="col-sm-2 control-label">蓝汛CNAME</label>
+      <div class="col-sm-10">
+         <input class="form-control" id="focusedInput" type="text" placeholder='请输入蓝汛CNAME' name='cc_cname' value="{{query.cc_cname}}">
+      </div>
+   </div>
+   <div class="form-group">
+      <label class="col-sm-2 control-label">网宿CNAME</label>
+      <div class="col-sm-10">
+         <input class="form-control" id="focusedInput" type="text" placeholder='请输入网宿CNAME' name='wc_cname' value="{{query.wc_cname}}"> 
+      </div>
+   </div>
+   <!--
+   <div class="form-group">
+      <label class="col-sm-2 control-label">是否启用加速</label>
+	  <div class="col-sm-10" align="center">
+		<label>
+			<input type="radio" name="optionRadios" id="optionsRadios" name='' value="0" checked>启用
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="radio" name="optionRadios" id="optionsRadios" value="1" checked>未启用
+		</label>
+	  </div>		
+   </div>
+   -->
+   <div class="form-group">
+      <label class="col-sm-2 control-label">使用人</label>
+      <div class="col-sm-10">
+         <input class="form-control" id="owner" name="owner" type="text" placeholder='请输入使用人' value="{{query.owner}}">
+      </div>
+   </div>
+   <div class="form-group">
+      <label class="col-sm-2 control-label">缓存规则</label>
+      <div class="col-sm-10">
+         <textarea class="form-control" rows="6" name="cache_content">{{query.cache_content}}</textarea>
+      </div>
+   </div>
+   <div class="form-group">
+        <center><input type="submit" class="btn btn-success" value="提交" id="btn_form_submit"/></center>
+   </div>
+</form>
+</div>
+</body>

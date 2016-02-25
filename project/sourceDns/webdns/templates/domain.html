@@ -1,0 +1,56 @@
+{%extends "base.html"%}
+<html>
+<head></head>
+
+{%block body%}
+<body>
+<form method="post" enctype="multipart/form-data">{%csrf_token%}
+<table>
+<!--
+<tr>
+<td style="text-align:right;"><b>二级域名：</b></td>
+<td style="text=align:left;">
+    <input type="text" name="domain" value="">
+</td>
+</tr>
+<tr>
+<td style="text-align:right;"><b>备  注：</b></td>
+<td style="text=align:left;">
+    <textarea name="content" rows="10" cols="80"></textarea>
+</td>
+</tr>
+-->
+{{uf}}
+<tr>
+<td></td>
+<td align="center"><input type="submit" value="提交" id="submit"></td>
+</tr>
+</table>
+</form>
+<!--
+<script >
+function valid_domain(){
+    var domain = $('#id_domain').val();
+    if(domain == ''){
+        return false;
+    };
+    return true;
+};
+
+$(document).ready(function(){
+    var is_valid = true;
+    $('#submit').click(function(event){
+        if(!valid_domain()){
+            is_valid = false;
+        };
+        alert(is_valid);
+        if(!is_valid){
+            event.preventDefault();
+        };
+    })
+});
+</script>
+-->
+</body>
+{%endblock%}
+</html>

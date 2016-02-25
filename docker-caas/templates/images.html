@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block head%}
+    {{block.super}}
+{% endblock %}
+
+{%block body%}
+{% load staticfiles %}
+    <div id="wrapper">
+        {%block navmenu%}
+            {{block.super}}
+        {%endblock%}
+
+        <div id="page-wrapper">
+
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">
+                            镜像管理
+                        </h1>
+                        <ol class="breadcrumb">
+                            <li>
+                                <i class="fa fa-dashboard"></i>  <a href="index.html">首页</a>
+                            </li>
+                            <li class="active">
+                                <i class="fa fa-table"></i> 镜像管理
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+                <!-- /.row -->
+
+                
+                    <div class="col-lg-12">
+                        <!--
+                        <h2>Bordered with Striped Rows</h2>
+                    -->
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>镜像id</th>
+                                        <th>镜像名称</th>
+                                        <th>镜像版本</th>
+                                        <th>创建时间</th>
+                                        <th>镜像大小</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                
+                                <tbody>
+                                    {%for image in imagesData %}
+                                    <tr>
+                                        <td>{{image.id}}</td>
+                                        <td>{{image.name}}</td>
+                                        <td>{{image.version}}</td>
+                                        <td>{{image.created}}</td>
+                                        <td>{{image.VirtualSize}}</td>
+                                        <td><a href="#">删除</a></td>
+                                    </tr>
+                                    {%endfor%}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="{% static 'js/jquery.js' %}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+{% endblock %}
+</html>
